@@ -21,7 +21,6 @@ export const signup = async (req, res) => {
   if (req.file) {
     image = `http://localhost:3000/uploads/${req.file.originalname}`;
   }
-  let otp = Math.floor(100000 + Math.random() * 900000).toString();
   let user = await userModel.insertMany({
     name,
     email,
@@ -29,10 +28,13 @@ export const signup = async (req, res) => {
     userName,
     role,
     image,
-    otp,
   });
   if (user) {
-    sendEmail(email, "verify your email", `you otp is ${otp}`);
+    let token = jwt.sign({ email }, "verify", { expiresIn: "5m" });
+    let verifyButton = `<button>
+    <a href="http://localhost:3000/auth/verify-email?token=${token}">verify account</a>
+    </button>`;
+    sendEmail(email, "verify your email", "verify", verifyButton);
     res.json({ message: "success", data: user });
   } else {
     res.json({ message: "fail" });
@@ -98,44 +100,64 @@ export const generateNewAccessToken = async (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
-  let { email, otp } = req.body;
-  let userFound = await userModel.find({ email });
-  if (userFound.length) {
-    if (!userFound[0].isVerified)
-      if (otp == userFound[0].otp) {
-        let user = await userModel.findByIdAndUpdate(
-          userFound[0]._id,
-          {
-            isVerified: true,
-            otp: null,
-          },
-          { new: true },
-        );
-        res.json({ message: "done", user });
-      } else {
-        res.json({ message: "otp not correct" });
-      }
-    else {
-      res.json({ message: "email already verified" });
-    }
+  let { token } = req.query;
+  let decode = jwt.verify(token, "verify");
+  if (!decode) return res.json({ message: "invalid token" });
+  let user = await userModel.findByIdAndUpdate(
+    decode.email,
+    {
+      isVerified: true,
+      otp: null,
+    },
+    { new: true },
+  );
+  if (user) {
+    return res.json({ message: "email verified successfully" });
   } else {
-    res.json({ message: "user not found" });
+    return res.json({message:'user not found'})
   }
 };
 
 export const resendOTP = async (req, res) => {
   let { email } = req.body;
   let userFound = await userModel.findOne({ email });
-  if(!userFound){
-    return res.json({message:"user not found"});
+  if (!userFound) {
+    return res.json({ message: "user not found" });
   }
-  
+  let otp = Math.floor(100000 + Math.random() * 900000).toString();
+  userFound.otp = otp;
+  await userFound.save();
+  res.json({ message: "check ur mail" });
 };
 
 export const forgetPassword = async (req, res) => {
   let { email } = req.body;
+  let userFound = await userModel.findOne({ email });
+  if (!userFound) {
+    return res.json({ message: "user not found" });
+  }
+  let otp = Math.floor(100000 + Math.random() * 900000).toString();
+  userFound.otp = otp;
+  await userFound.save();
+  sendEmail(email, "verify your email", `your otp is ${otp}`);
+  res.json({ message: "check ur mail" });
 };
 
 export const resetPassword = async (req, res) => {
-  let { email } = req.body;
+  let { email, otp, password, confirmPassword } = req.body;
+  if (password != confirmPassword) {
+    return res.json({ message: "password not matched" });
+  }
+  let userFound = await userModel.findOne({ email });
+  if (!userFound) {
+    return res.json({ message: "user not found" });
+  }
+  if (otp != userFound.otp) {
+    return res.json({ message: "otp not correct" });
+  }
+  let hashedPassword = await bcrypt.hash(password, 10);
+  userFound.password = hashedPassword;
+  userFound.otp = null;
+  await userFound.save();
+  res.json({ message: "done" });
 };

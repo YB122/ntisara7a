@@ -10,7 +10,7 @@ let router = Router();
 router.post("/signup", validateInput(signupValidate),upload().single('image'), signup);
 router.post("/login", validateInput(loginValidate), login);
 router.post("/generate-new-access-token", auth, generateNewAccessToken);
-router.put("/verify-email", validateInput(verifyValidate), verifyEmail);
+router.get("/verify-email", verifyEmail);
 router.post('/resend-otp',resendOTP);
 router.put('/forget-password',forgetPassword);
 router.put("/reset-password", resetPassword);
