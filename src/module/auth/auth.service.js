@@ -122,3 +122,20 @@ export const verifyEmail = async (req, res) => {
     res.json({ message: "user not found" });
   }
 };
+
+export const resendOTP = async (req, res) => {
+  let { email } = req.body;
+  let userFound = await userModel.findOne({ email });
+  if(!userFound){
+    return res.json({message:"user not found"});
+  }
+  
+};
+
+export const forgetPassword = async (req, res) => {
+  let { email } = req.body;
+};
+
+export const resetPassword = async (req, res) => {
+  let { email } = req.body;
+};
