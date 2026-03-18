@@ -1,6 +1,7 @@
 import { userModel } from "../../database/model/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { env } from "../../../config/env.service.js";
 
 export const profile = async (req, res) => {
   let userFound = await userModel.findOne({ _id: req.user._id });
@@ -55,7 +56,7 @@ export const profileURL = async (req, res) => {
   if (req.user) {
     let userFound = await userModel.findById(req.user._id);
     if (userFound) {
-      let profileUrl = `https://localhost:3000/user/${userFound.userName}`;
+      let profileUrl = `${env.base_url}/user/${userFound.userName}`;
       res.json({ message: "done", data: profileUrl });
     } else {
       res.json({ message: "user not found" });

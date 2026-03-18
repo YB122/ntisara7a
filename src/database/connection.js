@@ -1,14 +1,12 @@
 import dns from "node:dns";
 import mongoose from "mongoose";
+import { env } from "../../config/env.service.js";
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 export const dataBaseConnection = () => {
   mongoose
-    .connect(
-      "mongodb+srv://youssefbenyamine2eme_db_user:youssef@cluster0.fcv7kg6.mongodb.net/nti-sara7a",
-      // "mongodb://localhost:27017/nti-sara7a",
-    )
+    .connect(env.databaseUrl)
     .then(() => console.log("data base connected"))
     .catch((err) => console.log(err));
 };

@@ -2,6 +2,7 @@ import { userModel } from "../../database/model/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendEmail } from "../../common/email/sendEmail.js";
+import { env } from "../../../config/env.service.js";
 
 export const signup = async (req, res) => {
   let { name, email, password, confirmPassword, role, userName } = req.body;
@@ -16,10 +17,10 @@ export const signup = async (req, res) => {
   if (password != confirmPassword) {
     return res.json({ message: "password not matched" });
   }
-  let hashedPassword = await bcrypt.hash(password, 10);
+  let hashedPassword = await bcrypt.hash(password, env.hash);
   let image;
   if (req.file) {
-    image = `http://localhost:3000/uploads/${req.file.originalname}`;
+    image = `${env.base_url}/uploads/${req.file.originalname}`;
   }
   let user = await userModel.insertMany({
     name,
@@ -30,9 +31,9 @@ export const signup = async (req, res) => {
     image,
   });
   if (user) {
-    let token = jwt.sign({ email }, "verify", { expiresIn: "5m" });
+    let token = jwt.sign({ email }, env.verifySignature, { expiresIn: "5m" });
     let verifyButton = `<button>
-    <a href="http://localhost:3000/auth/verify-email?token=${token}">verify account</a>
+    <a href="${env.base_url}/auth/verify-email?token=${token}">verify account</a>
     </button>`;
     sendEmail(email, "verify your email", "verify", verifyButton);
     res.json({ message: "success", data: user });
@@ -53,17 +54,17 @@ export const login = async (req, res) => {
       let signature = "";
       switch (userSearch.role) {
         case "admin":
-          signature = "signatureAdmin";
+          signature = env.signatureAdmin;
           break;
         case "user":
-          signature = "signatureUser";
+          signature = env.signatureUser;
           break;
       }
       let accessToken = jwt.sign({ _id: userSearch._id }, signature, {
-        expiresIn: "30m",
+        expiresIn: env.accessToken,
       });
       let refreshToken = jwt.sign({ _id: userSearch._id }, signature, {
-        expiresIn: "1y",
+        expiresIn: env.refreshToken,
       });
       res.json({
         message: "login success",
@@ -71,7 +72,7 @@ export const login = async (req, res) => {
         refreshToken: refreshToken,
       });
     } else {
-      res.json({ message: "not found user or wrong password dssd" });
+      res.json({ message: "not found user or wrong password" });
     }
   } else {
     res.json({ message: "not found user or wrong password" });
@@ -84,10 +85,10 @@ export const generateNewAccessToken = async (req, res) => {
   let signature = "";
   switch (bearer) {
     case "admin":
-      signature = "signatureAdmin";
+      signature = env.signatureAdmin;
       break;
     case "user":
-      signature = "signatureUser";
+      signature = env.refreshToken;
       break;
   }
   let decode = jwt.verify(refreshToken, signature);
@@ -101,20 +102,23 @@ export const generateNewAccessToken = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
   let { token } = req.query;
-  let decode = jwt.verify(token, "verify");
+  let decode = jwt.verify(token, env.verifySignature);
   if (!decode) return res.json({ message: "invalid token" });
+  let userFound = await userModel.findOne({ email: decode.email });
   let user = await userModel.findByIdAndUpdate(
-    decode.email,
+    userFound._id,
     {
       isVerified: true,
       otp: null,
     },
     { new: true },
   );
+  console.log(user);
+
   if (user) {
     return res.json({ message: "email verified successfully" });
   } else {
-    return res.json({message:'user not found'})
+    return res.json({ message: 'user not found' })
   }
 };
 

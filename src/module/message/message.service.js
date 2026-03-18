@@ -1,5 +1,6 @@
 import { userModel } from "../../database/model/user.model.js";
 import { messageModel } from "../../database/model/message.model.js";
+import { env } from "../../../config/env.service.js";
 
 export const sendMessage = async (req, res) => {
   let { content, reciverid } = req.body;
@@ -10,7 +11,7 @@ export const sendMessage = async (req, res) => {
   let images;
   if (req.files) {
     images = req.files.map((file) => {
-      return `http://localhost:3000/uploads/${file.originalname}`;
+      return `${env.base_url}/uploads/${file.originalname}`;
     });
   }
   let message = await messageModel.insertMany({

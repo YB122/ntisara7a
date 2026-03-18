@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { env } from "../../../config/env.service.js";
 
 export const sendEmail = async (email, subject, text, html) => {
   let transporter = nodemailer.createTransport({
@@ -6,8 +7,8 @@ export const sendEmail = async (email, subject, text, html) => {
     port: 587, // 587 if false 465 if true
     secure: false,
     auth: {
-      user: "youssefbenyamine2eme@gmail.com",
-      pass: "vkgq azbq izjl yqbd",
+      user: env.email, //
+      pass: env.password,
     },
   });
 

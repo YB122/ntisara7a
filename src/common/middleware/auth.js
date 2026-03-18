@@ -1,14 +1,16 @@
 import jwt from "jsonwebtoken";
+import { env } from "./../../../config/env.service.js";
+
 export const auth = (req, res, next) => {
   let { authorization } = req.headers;
   let [bearer, token] = authorization.split(" ");
   let signature = "";
   switch (bearer) {
     case "admin":
-      signature = "signatureAdmin";
+      signature = env.signatureAdmin;
       break;
     case "user":
-      signature = "signatureUser";
+      signature = env.signatureUser;
       break;
   }
   let decode = jwt.verify(token, signature);
@@ -20,10 +22,10 @@ export const generateToken = (userSearch) => {
   let signature = "";
   switch (userSearch.role) {
     case "admin":
-      signature = "signatureAdmin";
+      signature = env.signatureAdmin;
       break;
     case "user":
-      signature = "signatureUser";
+      signature = env.signatureUser;
       break;
   }
   return jwt.sign({ _id: userSearch._id }, signature);
