@@ -18,6 +18,8 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    otp: { type: String },
+    isVerified: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

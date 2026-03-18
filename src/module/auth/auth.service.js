@@ -1,6 +1,7 @@
 import { userModel } from "../../database/model/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { sendEmail } from "../../common/email/sendEmail.js";
 
 export const signup = async (req, res) => {
   let { name, email, password, confirmPassword, role, userName } = req.body;
@@ -20,6 +21,7 @@ export const signup = async (req, res) => {
   if (req.file) {
     image = `http://localhost:3000/uploads/${req.file.originalname}`;
   }
+  let otp = Math.floor(100000 + Math.random() * 900000).toString();
   let user = await userModel.insertMany({
     name,
     email,
@@ -27,8 +29,10 @@ export const signup = async (req, res) => {
     userName,
     role,
     image,
+    otp,
   });
   if (user) {
+    sendEmail(email, "verify your email", `you otp is ${otp}`);
     res.json({ message: "success", data: user });
   } else {
     res.json({ message: "fail" });
@@ -41,6 +45,9 @@ export const login = async (req, res) => {
   if (userSearch) {
     let data = await bcrypt.compare(password, userSearch.password);
     if (data) {
+      if (!userSearch.isVerified) {
+        return res.json({ message: "your email not verified" });
+      }
       let signature = "";
       switch (userSearch.role) {
         case "admin":
@@ -62,7 +69,7 @@ export const login = async (req, res) => {
         refreshToken: refreshToken,
       });
     } else {
-      res.json({ message: "not found user or wrong password" });
+      res.json({ message: "not found user or wrong password dssd" });
     }
   } else {
     res.json({ message: "not found user or wrong password" });
@@ -87,5 +94,31 @@ export const generateNewAccessToken = async (req, res) => {
       expiresIn: "30m",
     });
     res.json({ message: "accessToken", accessToken: accessToken });
+  }
+};
+
+export const verifyEmail = async (req, res) => {
+  let { email, otp } = req.body;
+  let userFound = await userModel.find({ email });
+  if (userFound.length) {
+    if (!userFound[0].isVerified)
+      if (otp == userFound[0].otp) {
+        let user = await userModel.findByIdAndUpdate(
+          userFound[0]._id,
+          {
+            isVerified: true,
+            otp: null,
+          },
+          { new: true },
+        );
+        res.json({ message: "done", user });
+      } else {
+        res.json({ message: "otp not correct" });
+      }
+    else {
+      res.json({ message: "email already verified" });
+    }
+  } else {
+    res.json({ message: "user not found" });
   }
 };

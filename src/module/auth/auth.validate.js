@@ -14,3 +14,8 @@ export const loginValidate = joi.object({
   email: joi.string().email().required(),
   password: joi.string().required().min(8).max(30),
 });
+
+export const verifyValidate = joi.object({
+  email: joi.string().email().required(),
+  otp: joi.string().required(),
+});
