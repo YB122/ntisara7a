@@ -1,15 +1,29 @@
 # DAY-7 Backend Application
 
-A Node.js/Express.js backend application with authentication, user management, and messaging features.
+A Node.js/Express.js backend application inspired by **Sarhne.com** - an anonymous messaging platform that allows users to send and receive anonymous messages securely. This backend provides the core functionality for a modern anonymous communication system with user authentication, profile management, and secure messaging features.
+
+## What is Sarhne?
+
+Sarhne (صرحني) is an anonymous messaging platform where users can:
+
+- Create anonymous accounts to send and receive messages
+- Share their profile links to receive anonymous messages
+- Communicate privately without revealing their identity
+- Manage their messaging privacy and security
+
+This backend application implements the core functionality similar to Sarhne.com, providing a secure foundation for anonymous communication services.
 
 ## Features
 
-- **Authentication**: User registration and login with JWT tokens
-- **User Management**: CRUD operations for user profiles
-- **Messaging System**: Send and receive messages between users
-- **File Uploads**: Support for file uploads via Multer
-- **Database Integration**: MongoDB with Mongoose ODM
+- **Anonymous Messaging**: Send and receive messages anonymously like Sarhne.com
+- **User Authentication**: Secure registration and login with JWT tokens
+- **Profile Management**: Create and manage user profiles with unique usernames
+- **Profile Sharing**: Generate shareable profile URLs (e.g., `http://localhost:3000/user/username`)
+- **File Attachments**: Support for image/file uploads in messages
+- **Email Verification**: Secure email verification for account activation
+- **Password Recovery**: Forgot password functionality with OTP verification
 - **Security**: Environment-based configuration for sensitive data
+- **Role-based Access**: Admin and user role management
 
 ## Tech Stack
 
@@ -45,10 +59,12 @@ src/
 ## Installation
 
 1. Clone the repository
+
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+
+```bash
+npm install
+```
 
 ## Usage
 
@@ -58,24 +74,44 @@ Start the development server:
 npm start
 ```
 
-The server will run on port 3000.
+The server will run on port 3000. Once running, you can:
+
+1. **Register a new account** at `POST /auth/register`
+2. **Login** at `POST /auth/login` to get JWT tokens
+3. **Get your profile URL** at `GET /user/profile-url` to share with others
+4. **Receive anonymous messages** from anyone who has your profile URL
+5. **Send messages** to other users using their `POST /message/send`
+
+## How It Works (Similar to Sarhne.com)
+
+1. **User Registration**: Users create accounts with email verification
+2. **Profile Creation**: Each user gets a unique username and profile URL
+3. **Anonymous Messaging**: Anyone with the profile URL can send anonymous messages
+4. **Privacy**: Senders remain anonymous while receivers can manage their messages
+5. **File Sharing**: Users can attach files to their messages
 
 ## API Endpoints
 
 ### Authentication
 
-- `POST /auth/register` - Register a new user
-- `POST /auth/login` - User login
+- `POST /auth/register` - Register a new user with email verification
+- `POST /auth/login` - User login with JWT tokens
+- `POST /auth/forget-password` - Request password reset with OTP
+- `POST /auth/reset-password` - Reset password with OTP
+- `GET /auth/verify-email` - Verify email account
+- `POST /auth/resend-otp` - Resend verification OTP
 
 ### Users
 
 - `GET /user/profile` - Get user profile
 - `PUT /user/profile` - Update user profile
 - `DELETE /user/profile` - Delete user account
+- `GET /user/profile-url` - Get shareable profile URL
+- `GET /user/get-user-data-from-user-name` - Get user data by username
 
 ### Messages
 
-- `POST /message/send` - Send a message
+- `POST /message/send` - Send anonymous message to user
 - `GET /message/inbox` - Get received messages
 - `GET /message/sent` - Get sent messages
 
