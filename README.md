@@ -169,32 +169,6 @@ Once the server is running, you can:
 
 Create a `.env` file in the `config/` directory with the following variables:
 
-```env
-# Server Configuration
-PORT=3000
-BASE_URL=http://localhost:3000
-
-# Database Configuration
-DATA_BASE_URL_Y=mongodb+srv://username:password@cluster.mongodb.net/database_name
-
-# Email Configuration
-EMAIL=your_email@gmail.com
-PASSWORD=your_email_password
-
-# Security Configuration
-HASH=10
-SIGNATURE_ADMIN=your_admin_jwt_signature
-SIGNATURE_USER=your_user_jwt_signature
-VERIFY_SIGNATURE_Y=your_verification_jwt_signature
-
-# Token Configuration
-ACCESS_TOKEN=30m
-REFRESH_TOKEN=1Y
-
-# Additional Security
-BCRYPT_ROUNDS=10
-JWT_EXPIRE_TIME=30m
-```
 
 **🔒 Security Note**: All sensitive data (database credentials, JWT secrets, email passwords) are stored in environment variables and not hardcoded in the application. Never commit your `.env` file to version control.
 
