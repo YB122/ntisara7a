@@ -1,7 +1,7 @@
 import { userModel } from "../../database/model/user.model.js";
 import { messageModel } from "../../database/model/message.model.js";
 import { env } from "../../../config/env.service.js";
-
+/*comment*/
 export const sendMessage = async (req, res) => {
   let { content, reciverid } = req.body;
   let userFound = await userModel.findById(reciverid);
