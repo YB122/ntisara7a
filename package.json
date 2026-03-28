@@ -1,12 +1,19 @@
 {
   "name": "day-7",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Anonymous messaging backend inspired by Sarhne.com",
+  "main": "src/main.js",
   "scripts": {
-    "start": "node --watch ./src/main.js"
+    "start": "node ./src/main.js",
+    "dev": "node --watch ./src/main.js"
   },
-  "keywords": [],
+  "keywords": [
+    "anonymous",
+    "messaging",
+    "backend",
+    "sarhne",
+    "express"
+  ],
   "author": "",
   "license": "ISC",
   "type": "module",
