@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import authRouter from "./module/auth/auth.controller.js";
 import userRouter from "./module/users/user.controller.js";
 import messageRouter from "./module/message/message.controller.js";
@@ -15,7 +16,7 @@ export const callServer = () => {
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
   app.use("/message", messageRouter);
-  // app.use(cors({origin: "*"}));
+  app.use(cors({ origin: ["*"] }));
   app.listen(env.port, () => {
     console.log("server 3000 open");
   });
