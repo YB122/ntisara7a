@@ -47,7 +47,7 @@ export const login = async (req, res) => {
   if (userSearch) {
     let data = await bcrypt.compare(password, userSearch.password);
     if (data) {
-      if (!userSearch.isVerified) {
+      if (!(userSearch.isVerified)) {
         return res.status(400).json({ message: "your email not verified" });
       }
       let accessToken = generateToken(userSearch);
