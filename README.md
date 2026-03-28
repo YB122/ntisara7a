@@ -2,11 +2,6 @@
 
 A comprehensive Node.js/Express.js backend application inspired by **Sarhne.com** - an anonymous messaging platform that enables secure, private communication between users. This backend provides a robust foundation for modern anonymous messaging systems with complete user authentication, profile management, and secure messaging capabilities.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/DAY-7)
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-%3E%3D4.4-green)](https://www.mongodb.com/)
-
 ## 🌟 What is Sarhne?
 
 Sarhne (صرحني) is an anonymous messaging platform where users can:
@@ -79,98 +74,36 @@ src/
 └── uploads/             # File upload storage directory
 ```
 
-## 📦 Quick Start
+## 📦 Installation
 
-### 🚀 One-Click Deployment
+### Prerequisites
 
-Deploy this application instantly to Vercel:
+- Node.js (v16 or higher)
+- MongoDB (local or MongoDB Atlas)
+- Git
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/DAY-7)
+### Setup
 
-### 🛠️ Local Development
+1. **Clone the repository**
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/DAY-7.git
+git clone <repository-url>
 cd DAY-7
+```
 
-# Install dependencies
+2. **Install dependencies**
+
+```bash
 npm install
-
-# Set up environment variables
-cp config/.env.example config/.env
-# Edit config/.env with your values
-
-# Start development server
-npm run dev
 ```
 
-## 📁 Project Structure
+3. **Environment Configuration**
 
-```text
-src/
-├── app.controller.js      # Main application setup and server configuration
-├── main.js               # Application entry point
-├── common/               # Shared utilities and middleware
-│   ├── middleware/       # Authentication, file upload, etc.
-│   └── utils/           # Validation, helpers, etc.
-├── config/               # Environment configuration and services
-│   ├── .env.example     # Environment variables template
-│   ├── .env             # Environment variables (gitignored)
-│   └── env.service.js   # Environment service loader
-├── database/             # Database configuration and models
-│   ├── connection.js     # MongoDB connection setup
-│   └── model/           # Mongoose schemas and models
-│       ├── user.model.js
-│       └── message.model.js
-├── module/              # Feature modules
-│   ├── auth/            # Authentication routes, controllers, services
-│   │   ├── auth.controller.js
-│   │   ├── auth.service.js
-│   │   └── auth.validate.js
-│   ├── users/           # User management routes and controllers
-│   │   ├── user.controller.js
-│   │   ├── user.service.js
-│   │   └── user.validate.js
-│   └── message/         # Messaging routes and controllers
-│       ├── message.controller.js
-│       ├── message.service.js
-│       └── message.validate.js
-└── uploads/             # File upload storage directory
-```
+Create a `.env` file in the `config/` directory (see Environment Variables section below).
 
-## ⚙️ Environment Variables
+4. **Start MongoDB**
 
-Create a `.env` file in the `config/` directory based on `.env.example`:
-
-```env
-# Server Configuration
-PORT=3000
-BASE_URL=http://localhost:3000
-
-# Database Configuration
-DATA_BASE_URL_Y=mongodb+srv://username:password@cluster.mongodb.net/database_name
-
-# Email Configuration
-EMAIL=your_email@gmail.com
-PASSWORD=your_email_password
-
-# Security Configuration
-HASH=10
-SIGNATURE_ADMIN=your_admin_jwt_signature
-SIGNATURE_USER=your_user_jwt_signature
-VERIFY_SIGNATURE_Y=your_verification_jwt_signature
-
-# Token Configuration
-ACCESS_TOKEN=30m
-REFRESH_TOKEN=1Y
-
-# Additional Security
-BCRYPT_ROUNDS=10
-JWT_EXPIRE_TIME=30m
-```
-
-**🔒 Security Note**: Never commit your `.env` file to version control. Use `.env.example` as a template.
+Make sure your MongoDB server is running locally or update the `DATA_BASE_URL_Y` in your `.env` file with your MongoDB Atlas connection string.
 
 ## 🚀 Usage
 
@@ -235,6 +168,7 @@ Once the server is running, you can:
 ## ⚙️ Environment Variables
 
 Create a `.env` file in the `config/` directory with the following variables:
+
 
 **🔒 Security Note**: All sensitive data (database credentials, JWT secrets, email passwords) are stored in environment variables and not hardcoded in the application. Never commit your `.env` file to version control.
 
