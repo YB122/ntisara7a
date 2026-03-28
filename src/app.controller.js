@@ -4,6 +4,7 @@ import userRouter from "./module/users/user.controller.js";
 import messageRouter from "./module/message/message.controller.js";
 import { dataBaseConnection } from "./database/connection.js";
 import { env } from "../config/env.service.js";
+import cors from "cors";
 
 export const callServer = () => {
   let app = express();
@@ -14,6 +15,7 @@ export const callServer = () => {
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
   app.use("/message", messageRouter);
+  app.use(cors({origin: "*"}));
   app.listen(env.port, () => {
     console.log("server 3000 open");
   });

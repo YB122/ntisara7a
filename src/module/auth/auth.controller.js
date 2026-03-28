@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, signup, generateNewAccessToken, verifyEmail, resendOTP, forgetPassword, resetPassword } from "./auth.service.js";
+import { login, signup, generateNewAccessToken, verifyEmail, resendEmail, forgetPassword, resetPassword } from "./auth.service.js";
 import { auth } from "../../common/middleware/auth.js";
 import { loginValidate, signupValidate } from "./auth.validate.js";
 import { validateInput } from "../../common/utils/validate.js";
@@ -11,7 +11,7 @@ router.post("/signup", validateInput(signupValidate),upload().single('image'), s
 router.post("/login", validateInput(loginValidate), login);
 router.post("/generate-new-access-token", auth, generateNewAccessToken);
 router.get("/verify-email", verifyEmail);
-router.post('/resend-otp',resendOTP);
+router.post('/resend-email', resendEmail);
 router.put('/forget-password',forgetPassword);
 router.put("/reset-password", resetPassword);
 export default router;
