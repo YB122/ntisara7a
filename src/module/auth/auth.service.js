@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendEmail } from "../../common/email/sendEmail.js";
 import { env } from "../../../config/env.service.js";
+import { generateToken } from "../../common/middleware/auth.js";
 
 export const signup = async (req, res) => {
   let { name, email, password, confirmPassword, userName } = req.body;
