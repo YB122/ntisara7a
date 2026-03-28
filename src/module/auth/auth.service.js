@@ -31,7 +31,7 @@ export const signup = async (req, res) => {
     image,
   });
   if (user) {
-    let token = jwt.sign({ email }, env.verifySignature, { expiresIn: "15m" });
+    let token = jwt.sign({ email }, env.verifySignature, { expiresIn: "1d" });
     let verifyButton = `<button>
     <a href="${env.base_url}/auth/verify-email?token=${token}">verify account</a>
     </button>`;
@@ -119,7 +119,7 @@ export const resendEmail = async (req, res) => {
   if (userFound.isVerified) {
     return res.status(400).json({ message: "your email already verified" });
   }
-  let token = jwt.sign({ email }, env.verifySignature, { expiresIn: "15m" });
+  let token = jwt.sign({ email }, env.verifySignature, { expiresIn: "1d" });
   let verifyButton = `<button>
     <a href="${env.base_url}/auth/verify-email?token=${token}">Reverify your account</a>
     </button>`;
