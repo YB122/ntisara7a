@@ -17,7 +17,7 @@ export const signup = async (req, res) => {
   if (password != confirmPassword) {
     return res.status(400).json({ message: "password not matched" });
   }
-  let hashedPassword = await bcrypt.hash(password, env.hash);
+  let hashedPassword = await bcrypt.hash(password, 10);
   let image;
   if (req.file) {
     image = `${env.base_url}/uploads/${req.file.originalname}`;
