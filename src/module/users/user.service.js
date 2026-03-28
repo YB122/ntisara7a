@@ -6,9 +6,9 @@ import { env } from "../../../config/env.service.js";
 export const profile = async (req, res) => {
   let userFound = await userModel.findOne({ _id: req.user._id });
   if (userFound) {
-    res.json({ message: "user found", data: userFound });
+    res.status(200).json({ message: "user found", data: userFound });
   } else {
-    res.json({ message: "user not found" });
+    res.status(404).json({ message: "user not found" });
   }
 };
 
@@ -62,17 +62,17 @@ export const profileURL = async (req, res) => {
       res.json({ message: "user not found" });
     }
   } else {
-    res.json({ message: "login first" });
+    res.status(400).json({ message: "login first" });
   }
 };
 
 export const getUserData = async (req, res) => {
   let { url } = req.body;
-  let data = url.split("/").pop();
-  let userFound = await userModel.findOne({ userName: data });
+  let userName = url.split("/").pop();
+  let userFound = await userModel.findOne({ userName });
   if (userFound) {
-    res.json({ message: "done", data: userFound });
+    res.status(200).json({ message: "done", data: userFound });
   } else {
-    res.json({ message: "user not found" });
+    res.status(404).json({ message: "user not found" });
   }
 };

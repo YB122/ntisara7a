@@ -6,7 +6,7 @@ export const sendMessage = async (req, res) => {
   let { content, reciverid } = req.body;
   let userFound = await userModel.findById(reciverid);
   if (!userFound) {
-    return res.json({ message: "in-valid receiver ID" });
+    return res.status(400).json({ message: "in-valid receiver ID" });
   }
   let images;
   if (req.files) {
@@ -20,9 +20,9 @@ export const sendMessage = async (req, res) => {
     image: images,
   });
   if (message) {
-    res.json({ message: "message send", data: message });
+    res.status(200).json({ message: "message send", data: message });
   } else {
-    res.json({ message: "send faild" });
+    res.status(400).json({ message: "send failed" });
   }
 };
 export const getAllMessages = async (req, res) => {
@@ -30,10 +30,10 @@ export const getAllMessages = async (req, res) => {
   if (messageFound.length) {
     res.json({ message: "done", data: messageFound });
   } else {
-    res.json({ message: "faild" });
+    res.json({ message: "failed" });
   }
 };
-export const getAllMessagesById = async (req, res) => {
+export const getMessageById = async (req, res) => {
   let { id } = req.params;
   let messageFound = await messageModel.findOne({
     reciverid: req.user._id,
@@ -54,6 +54,6 @@ export const deleteMessage = async (req, res) => {
   if (messageFound) {
     res.json({ message: "done", data: messageFound });
   } else {
-    res.json({ message: "faild" });
+    res.json({ message: "failed" });
   }
 };

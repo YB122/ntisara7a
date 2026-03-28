@@ -5,17 +5,17 @@ import { sendEmail } from "../../common/email/sendEmail.js";
 import { env } from "../../../config/env.service.js";
 
 export const signup = async (req, res) => {
-  let { name, email, password, confirmPassword, role, userName } = req.body;
+  let { name, email, password, confirmPassword, userName } = req.body;
   let emailSearch = await userModel.findOne({ email });
   if (emailSearch) {
-    return res.json({ message: "email already exist" });
+    return res.status(400).json({ message: "email already exist" });
   }
   let userNameSearch = await userModel.findOne({ userName });
   if (userNameSearch) {
-    return res.json({ message: "userName already exist" });
+    return res.status(400).json({ message: "userName already exist" });
   }
   if (password != confirmPassword) {
-    return res.json({ message: "password not matched" });
+    return res.status(400).json({ message: "password not matched" });
   }
   let hashedPassword = await bcrypt.hash(password, env.hash);
   let image;
@@ -27,18 +27,17 @@ export const signup = async (req, res) => {
     email,
     password: hashedPassword,
     userName,
-    role,
     image,
   });
   if (user) {
-    let token = jwt.sign({ email }, env.verifySignature, { expiresIn: "5m" });
+    let token = jwt.sign({ email }, env.verifySignature, { expiresIn: "15m" });
     let verifyButton = `<button>
     <a href="${env.base_url}/auth/verify-email?token=${token}">verify account</a>
     </button>`;
     sendEmail(email, "verify your email", "verify", verifyButton);
-    res.json({ message: "success", data: user });
+    res.status(200).json({ message: "success, SignUp" });
   } else {
-    res.json({ message: "fail" });
+    res.status(400).json({ message: "fail" });
   }
 };
 
@@ -49,33 +48,20 @@ export const login = async (req, res) => {
     let data = await bcrypt.compare(password, userSearch.password);
     if (data) {
       if (!userSearch.isVerified) {
-        return res.json({ message: "your email not verified" });
+        return res.status(400).json({ message: "your email not verified" });
       }
-      let signature = "";
-      switch (userSearch.role) {
-        case "admin":
-          signature = env.signatureAdmin;
-          break;
-        case "user":
-          signature = env.signatureUser;
-          break;
-      }
-      let accessToken = jwt.sign({ _id: userSearch._id }, signature, {
-        expiresIn: env.accessToken,
-      });
-      let refreshToken = jwt.sign({ _id: userSearch._id }, signature, {
-        expiresIn: env.refreshToken,
-      });
-      res.json({
+      let accessToken = generateToken(userSearch);
+      let refreshToken = generateToken(userSearch);
+      res.status(200).json({
         message: "login success",
         accessToken: accessToken,
         refreshToken: refreshToken,
       });
     } else {
-      res.json({ message: "not found user or wrong password" });
+      res.status(400).json({ message: "not found user or wrong password" });
     }
   } else {
-    res.json({ message: "not found user or wrong password" });
+    res.status(400).json({ message: "not found user or wrong password" });
   }
 };
 
@@ -103,8 +89,11 @@ export const generateNewAccessToken = async (req, res) => {
 export const verifyEmail = async (req, res) => {
   let { token } = req.query;
   let decode = jwt.verify(token, env.verifySignature);
-  if (!decode) return res.json({ message: "invalid token" });
+  if (!decode) return res.status(400).json({ message: "invalid token" });
   let userFound = await userModel.findOne({ email: decode.email });
+  if (userFound.isVerified) {
+    return res.status(400).json({ message: "your email already verified" });
+  }
   let user = await userModel.findByIdAndUpdate(
     userFound._id,
     {
@@ -113,25 +102,28 @@ export const verifyEmail = async (req, res) => {
     },
     { new: true },
   );
-  console.log(user);
-
   if (user) {
-    return res.json({ message: "email verified successfully" });
+    return res.status(200).json({ message: "email verified successfully" });
   } else {
-    return res.json({ message: 'user not found' })
+    return res.status(400).json({ message: "user not found" });
   }
 };
 
-export const resendOTP = async (req, res) => {
+export const resendEmail = async (req, res) => {
   let { email } = req.body;
   let userFound = await userModel.findOne({ email });
   if (!userFound) {
-    return res.json({ message: "user not found" });
+    return res.status(400).json({ message: "user not found" });
   }
-  let otp = Math.floor(100000 + Math.random() * 900000).toString();
-  userFound.otp = otp;
-  await userFound.save();
-  res.json({ message: "check ur mail" });
+  if (userFound.isVerified) {
+    return res.status(400).json({ message: "your email already verified" });
+  }
+  let token = jwt.sign({ email }, env.verifySignature, { expiresIn: "15m" });
+  let verifyButton = `<button>
+    <a href="${env.base_url}/auth/verify-email?token=${token}">Reverify your account</a>
+    </button>`;
+  sendEmail(email, "Reverify your email", "Reverify", verifyButton);
+  res.status(200).json({ message: "success, Reverify your email" });
 };
 
 export const forgetPassword = async (req, res) => {

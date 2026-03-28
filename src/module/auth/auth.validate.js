@@ -7,7 +7,6 @@ export const signupValidate = joi.object({
   confirmPassword: joi.string().required().min(8).max(30),
   userName: joi.string().min(3).max(20).required(),
   image: joi.string().optional(),
-  role: joi.string().valid("user", "admin").optional(),
 });
 
 export const loginValidate = joi.object({

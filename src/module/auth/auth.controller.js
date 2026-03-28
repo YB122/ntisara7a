@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { login, signup, generateNewAccessToken, verifyEmail, resendOTP, forgetPassword, resetPassword } from "./auth.service.js";
 import { auth } from "../../common/middleware/auth.js";
-import { loginValidate, signupValidate, verifyValidate } from "./auth.validate.js";
+import { loginValidate, signupValidate } from "./auth.validate.js";
 import { validateInput } from "../../common/utils/validate.js";
 import { upload } from "../../common/middleware/multer.js";
 
