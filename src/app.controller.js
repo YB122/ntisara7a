@@ -16,7 +16,7 @@ export const callServer = () => {
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
   app.use("/message", messageRouter);
-  app.use(cors({ origin: ["*","http://localhost:5173"] }));
+  app.use(cors({ origin: ["http://localhost:5173"]}));
   app.listen(env.port, () => {
     console.log("server 3000 open");
   });
